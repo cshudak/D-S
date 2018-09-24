@@ -1,13 +1,20 @@
 <?php
 
-$foo = "bar\n";
-$bar = 'bit';
-$bit = 'baz'
 
-echo $bar;
-echo $bar;
-echo $bit;
+//get the $taskid
 
-$one = 'ONE';
+$taskid = intval($_GET['$taskid'] ?? 0);
+// Fetch Work from Database
+$work = work::findByTaskID($taskID);
 
-echo "The value is {$one}.\n"
+
+//convert to JSON and print
+
+echo json_encode($work);
+require '.../.../app/common.php';
+
+
+
+  if ($taskid < 1) {
+    throw new Exception ('Invalid Task ID')
+  }
