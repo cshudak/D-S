@@ -2,27 +2,15 @@
 
 
 
-class Work
+class Team
 
 {
 
   public $id;
 
-  public $task_id;
+  public $name;
 
-  public $team_id;
-
-  public $start;  //'YYYY-MM-DD'
-
-  public $stop;   //'YYYY-MM-DD', needs to be calculated
-
-  public $hours;
-
-  public $completion_estimate;
-
-
-
-  public function __construct($row) {
+  public function __construct($data) {
 
     $this->id = intval($row['id']);
 
