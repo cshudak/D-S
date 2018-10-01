@@ -1,3 +1,45 @@
+Skip to content
+
+
+
+Pull requests
+Issues
+Marketplace
+Explore
+
+
+
+Sign out
+
+
+ Watch
+3
+ Star
+1
+ Fork
+14
+
+tag/iu-msis
+ Code
+ Issues 1
+ Pull requests 0
+ Projects 0
+ Wiki
+ Insights
+Branch: master
+Find file
+Copy path
+iu-msis/app/models/Team.php
+2d217e3 5 days ago
+ tag End video 12a: Team object and api endpoint
+1 contributor
+
+Raw
+Blame
+History
+
+37 lines (28 sloc) 727 Bytes
+
 <?php
 
 
@@ -10,49 +52,23 @@ class Team
 
   public $name;
 
+  public $hourly_rate;
+
+
+
   public function __construct($data) {
 
-    $this->id = intval($row['id']);
+    $this->id = intval($data['id']);
 
+    $this->name = $data['name'];
 
-
-    $this->task_id = intval($row['task_id']);
-
-    $this->team_id = intval($row['team_id']);
-
-
-
-    $this->start = $row['start_date'];
-
-    $this->hours = floatval($row['hours']);
-
-
-
-    // Calculate stop date
-
-    $hours = floor($this->hours);
-
-    $mins = intval(($this->hours - $hours) * 60); // Take advantage of one decimal place
-
-    $interval = 'PT'. ($hours ? $hours.'H' : '') . ($mins ? $mins.'M' : '');
-
-
-
-    $date = new DateTime($this->start);
-
-    $date->add(new DateInterval($interval));
-
-    $this->stop = $date->format('Y-m-d H:i:s');
-
-
-
-    $this->completion_estimate = intval($row['completion_estimate']);
+    $this->hourly_rate = floatval($data['hourly_rate']);
 
   }
 
 
 
-  public static function getWorkByTaskId(int $taskId) {
+  public static function fetchAll() {
 
     // 1. Connect to the database
 
@@ -62,9 +78,7 @@ class Team
 
     // 2. Prepare the query
 
-    $sql = 'SELECT * FROM Work WHERE task_id = ?';
-
-
+    $sql = 'SELECT * FROM Teams';
 
     $statement = $db->prepare($sql);
 
@@ -72,11 +86,7 @@ class Team
 
     // 3. Run the query
 
-    $success = $statement->execute(
-
-        [$taskId]
-
-    );
+    $success = $statement->execute();
 
 
 
@@ -86,24 +96,18 @@ class Team
 
     while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
 
-      // 4.a. For each row, make a new work object
+      $theTeam =  new Team($row);
 
-      $workItem =  new Work($row);
-
-
-
-      array_push($arr, $workItem);
+      array_push($arr, $theTeam);
 
     }
-
-
-
-    // 4.b. return the array of work objects
 
 
 
     return $arr;
 
   }
+
+
 
 }
