@@ -110,11 +110,19 @@ var tasksApp = new Vue({
 
     },
 
-    datetimeFormat(d) {
+    dateFormat(d) {
 
       d = d || moment();
 
-      return moment(d).format('YYYY-MM-DD[T]HH:MM');
+      return moment(d).format('YYYY-MM-DD');
+
+    },
+
+    timeFormat(d) {
+
+      d = d || moment();
+
+      return moment(d).format('YYYY-MM-DD');
 
     },
 
@@ -123,9 +131,9 @@ var tasksApp = new Vue({
       return {
 
         start: this.datetimeFormat(),
-
+        start_time:this.timeFormat(),
         stop: this.datetimeFormat(),
-
+        stop_time:this.timeFormat(),
         teamList: null,
 
         completion_estimate: 0
