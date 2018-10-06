@@ -170,9 +170,15 @@
 
                     <label for="start" class="col-sm-1 col-form-label">Start: </label>
 
-                    <div class="col-sm-6">
+                    <div class="col-sm-3">
 
-                      <input type="datetime-local" id="start" v-model="workForm.start" class="form-control" required>
+                      <input type="date" id="start" v-model="workForm.start" class="form-control" required>
+
+                    </div>
+
+                    <div class="col-sm-3">
+
+                      <input type="time" id="start_time" v-model="workForm.start_time" class="form-control" required>
 
                     </div>
 
@@ -182,9 +188,15 @@
 
                     <label for="stop" class="col-sm-1 col-form-label">End: </label>
 
-                    <div class="col-sm-6">
+                    <div class="col-sm-3">
 
-                      <input type="datetime-local" id="stop" v-model="workForm.stop" class="form-control" required>
+                      <input type="date" id="stop" v-model="workForm.stop" class="form-control" required>
+
+                    </div>
+
+                    <div class="col-sm-3">
+
+                      <input type="time" id="stop_time" v-model="workForm.stop_time" class="form-control" required>
 
                     </div>
 
@@ -220,7 +232,7 @@
 
                     <div class="col-sm-6">
 
-                      <select id="team" v-model="workForm.team" class="form-control" required>
+                      <select id="team" v-model="workForm.team_id" class="form-control" required>
 
                         <option v-for="t in teamList"
 
