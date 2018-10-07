@@ -42,9 +42,9 @@ var tasksApp = new Vue({
 
     workSpan () {
 
-      return moment(this.workForm.stop)
+      return moment(this.workForm.stop + ' ' + this.workForm.stop_time)
 
-             .diff(moment(this.workForm.start), 'hours', true)
+             .diff(moment(this.workForm.start + ' ' + this.workForm.start_time), 'hours', true)
 
              .toFixed(1);
 
@@ -56,39 +56,65 @@ var tasksApp = new Vue({
 
     handleWorkForm(e) {
 
-      e.preventDefault();
+
+
+      // TODO: Check validity in a better way
+
+      if (this.workSpan <= 0) {
+
+        console.error('Cannot submit, invalid values');
+
+        return;
+
+      }
 
 
 
-      // TODO: Check validity
+      this.workForm.start_date = this.workForm.start + ' ' + this.workForm.start_time;
+
+      this.workForm.hours = this.workSpan;
+
+      // Stop field not used by the API
+
+      // this.workForm.stop_date = this.workForm.stop + ' ' + this.workForm.stop_time;
 
 
-
-      console.log(e);
-
-
-
-      // TODO: Calculate hours
-
-      // something like:  moment.duration(end.diff(startTime)).asHours();
-
-
-
-      //TODO: clone workForm
 
       const s = JSON.stringify(this.workForm);
 
-      //TODO: POST to remote server
 
-      // fetch(url,)
 
-      // .then()
+      console.log(s);
 
 
 
-      //TODO: Append result
+      // POST to remote server
 
-      this.work.push(JSON.parse(s));
+      fetch('api/work.php', {
+
+        method: "POST", // *GET, POST, PUT, DELETE, etc.
+
+        headers: {
+
+            "Content-Type": "application/json; charset=utf-8"
+
+        },
+
+        body: s // body data type must match "Content-Type" header
+
+      })
+
+      .then( response => response.json() )
+
+      .then( json => {this.work.push(json)})
+
+      .catch( err => {
+
+        console.error('WORK POST ERROR:');
+
+        console.error(err);
+
+      })
 
 
 
@@ -110,31 +136,21 @@ var tasksApp = new Vue({
 
     },
 
-    dateFormat(d) {
-
-      d = d || moment();
-
-      return moment(d).format('YYYY-MM-DD');
-
-    },
-
-    timeFormat(d) {
-
-      d = d || moment();
-
-      return moment(d).format('YYYY-MM-DD');
-
-    },
-
     getEmptyWorkForm() {
 
       return {
 
-        start: this.datetimeFormat(),
-        start_time:this.timeFormat(),
-        stop: this.datetimeFormat(),
-        stop_time:this.timeFormat(),
-        teamList: null,
+        start: moment().format('YYYY-MM-DD'),
+
+        start_time: moment().format('HH:mm'),
+
+        stop: moment().format('YYYY-MM-DD'),
+
+        stop_time: moment().format('HH:mm'),
+
+        team_id: null,
+
+        task_id: this.task.id,
 
         completion_estimate: 0
 
@@ -144,17 +160,13 @@ var tasksApp = new Vue({
 
     prettyDate(d) {
 
-      return moment(d).format('YYYY-MM-DD HH:MM')
+      return moment(d).format('YYYY-MM-DD HH:mm')
 
     }
 
   },
 
   created () {
-
-    // Populate workForm with default values
-
-    this.workForm = this.getEmptyWorkForm();
 
 
 
@@ -166,6 +178,8 @@ var tasksApp = new Vue({
 
     console.log('Task: '+ taskId);
 
+    this.task.id = taskId;
+
 
 
     if (!taskId) {
@@ -175,6 +189,12 @@ var tasksApp = new Vue({
       //e.g., window.location = '404.html';
 
     }
+
+
+
+    // Populate workForm with default values
+
+    this.workForm = this.getEmptyWorkForm();
 
 
 
@@ -190,13 +210,15 @@ var tasksApp = new Vue({
 
     .catch( err => {
 
-      console.log('WORK FETCH ERROR:');
+      console.error('WORK FETCH ERROR:');
 
-      console.log(err);
+      console.error(err);
 
     })
 
 
+
+    // Fetch all teams, for the form
 
     fetch('api/team.php')
 
